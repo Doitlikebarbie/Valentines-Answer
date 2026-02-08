@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Answer to You, Trevor 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Playfair+Display:wght@400;700;900&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #1a0000 0%, #330000 25%, #4d0000 50%, #660000 75%, #800000 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated Background Hearts */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .heart-bg {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.15;
+            animation: float-up linear infinite;
+            color: #ff6b9d;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.15;
+            }
+            90% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Quiz Container */
+        #quiz-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        #quiz-container.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .quiz-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 5vw, 64px);
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.6);
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 107, 157, 0.6);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(255, 107, 157, 0.9);
+            }
+        }
+
+        .quiz-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            color: #ffb3d9;
+            text-align: center;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slide-in 0.6s ease forwards;
+        }
+
+        .question-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .question-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .question-card:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes slide-in {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-text {
+            font-size: clamp(20px, 3vw, 28px);
+            color: #fff;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b9d, #ff1744);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 107, 157, 0.4);
+            color: #fff;
+            padding: 18px 30px;
+            font-size: clamp(16px, 2.5vw, 22px);
+            font-family: 'Cormorant Garamond', serif;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 107, 157, 0.3);
+            border-color: #ff6b9d;
+            transform: translateX(10px);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, #ff6b9d, #ff1744);
+            border-color: #ff1744;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+        }
+
+        .option-btn.wrong {
+            background: rgba(100, 100, 100, 0.3);
+            border-color: #666;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 600px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b9d, #ff1744);
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.6);
+        }
+
+        /* Reveal Container */
+        #reveal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        #reveal-container.active {
+            display: block;
+        }
+
+        .reveal-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a0000 0%, #4d0000 50%, #800000 100%);
+        }
+
+        .reveal-content {
+            position: relative;
+            z-index: 101;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            opacity: 0;
+            animation: fade-in 1s ease 0.5s forwards;
+        }
+
+        @keyframes fade-in {
+            to { opacity: 1; }
+        }
+
+        .big-yes {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(80px, 15vw, 200px);
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 60px rgba(255, 107, 157, 1);
+            animation: yes-pulse 2s ease-in-out infinite, yes-appear 1.5s ease;
+        }
+
+        @keyframes yes-appear {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes yes-pulse {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 60px rgba(255, 107, 157, 1);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 80px rgba(255, 107, 157, 1), 0 0 120px rgba(255, 23, 68, 0.8);
+            }
+        }
+
+        .love-message {
+            max-width: 700px;
+            text-align: center;
+            color: #fff;
+            font-size: clamp(20px, 3vw, 32px);
+            line-height: 1.6;
+            margin-bottom: 50px;
+            font-weight: 400;
+            padding: 0 20px;
+            animation: fade-in 1s ease 1.2s backwards;
+        }
+
+        .love-message strong {
+            color: #ff6b9d;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2em;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 40px;
+            padding: 0 20px;
+        }
+
+        .photo-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            animation: photo-appear 0.8s ease forwards;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-item:nth-child(1) { animation-delay: 1.5s; }
+        .photo-item:nth-child(2) { animation-delay: 1.7s; }
+        .photo-item:nth-child(3) { animation-delay: 1.9s; }
+        .photo-item:nth-child(4) { animation-delay: 2.1s; }
+        .photo-item:nth-child(5) { animation-delay: 2.3s; }
+
+        @keyframes photo-appear {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotate(-5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(255, 107, 157, 0.6), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-item:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff6b9d;
+            position: absolute;
+            animation: confetti-fall linear forwards;
+            z-index: 1000;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .signature {
+            margin-top: 60px;
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(28px, 4vw, 48px);
+            color: #ffb3d9;
+            animation: fade-in 1s ease 2.5s backwards;
+        }
+
+        @media (max-width: 768px) {
+            .question-card {
+                padding: 30px 20px;
+            }
+
+            .photo-item img {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Hearts Background -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <!-- Quiz Container -->
+    <div id="quiz-container">
+        <h1 class="quiz-title">Answer These to Unlock My Response 💝</h1>
+        <p class="quiz-subtitle">You asked me to be your Valentine... let's see how well you know me, love!</p>
+
+        <!-- Question 1 -->
+        <div class="question-card">
+            <div class="question-text">
+                <span class="question-number">1</span>
+                What's my favourite thing about you?
+            </div>
+            <div class="options">
+                <button class="option-btn" data-question="1" data-answer="a">a) Your ass 🍑</button>
+                <button class="option-btn" data-question="1" data-answer="b">b) Your chest 💪</button>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question-card">
+            <div class="question-text">
+                <span class="question-number">2</span>
+                What's my shoe size?
+            </div>
+            <div class="options">
+                <button class="option-btn" data-question="2" data-answer="a">a) 41 👟</button>
+                <button class="option-btn" data-question="2" data-answer="b">b) 42 👟</button>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question-card">
+            <div class="question-text">
+                <span class="question-number">3</span>
+                What's my favourite snack?
+            </div>
+            <div class="options">
+                <button class="option-btn" data-question="3" data-answer="a">a) You 😏</button>
+                <button class="option-btn" data-question="3" data-answer="b">b) Ringoz 🥨</button>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- Reveal Container -->
+    <div id="reveal-container">
+        <div class="reveal-bg"></div>
+        <div class="reveal-content">
+            <div class="big-yes">YES! ❤️</div>
+            <div class="love-message">
+                <strong>My love,</strong><br><br>
+                I'll always love you now and forever. You're the best thing that has ever happened to me. 
+                I cherish and love you so much!!<br><br>
+                <strong>YES</strong>, I'll love to spend every Valentine's Day with you my love. 💕
+            </div>
+
+            <div class="photo-gallery" id="photoGallery"></div>
+
+            <div class="signature">
+                Forever yours 💖
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Floating hearts background
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-bg';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        createFloatingHearts();
+
+        // Quiz Logic
+        const correctAnswers = {
+            '1': 'a',
+            '2': 'a',
+            '3': 'a'
+        };
+
+        let answeredQuestions = new Set();
+        const totalQuestions = 3;
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const question = this.dataset.question;
+                const answer = this.dataset.answer;
+                
+                // Prevent multiple answers for same question
+                if (answeredQuestions.has(question)) return;
+
+                // Check if correct
+                if (correctAnswers[question] === answer) {
+                    this.classList.add('selected');
+                    answeredQuestions.add(question);
+                    
+                    // Update progress
+                    const progress = (answeredQuestions.size / totalQuestions) * 100;
+                    document.getElementById('progressFill').style.width = progress + '%';
+
+                    // Disable other options for this question
+                    document.querySelectorAll(`[data-question="${question}"]`).forEach(option => {
+                        if (option !== this) {
+                            option.style.opacity = '0.5';
+                            option.style.pointerEvents = 'none';
+                        }
+                    });
+
+                    // Check if all answered
+                    if (answeredQuestions.size === totalQuestions) {
+                        setTimeout(() => {
+                            revealAnswer();
+                        }, 1000);
+                    }
+                } else {
+                    // Wrong answer animation
+                    this.classList.add('wrong');
+                    setTimeout(() => {
+                        this.classList.remove('wrong');
+                    }, 500);
+                }
+            });
+        });
+
+        function revealAnswer() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('reveal-container').classList.add('active');
+                createConfetti();
+                loadPhotos();
+            }, 800);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ff1744', '#ffb3d9', '#fff', '#ffd700'];
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 30);
+            }
+        }
+
+        async function loadPhotos() {
+            const gallery = document.getElementById('photoGallery');
+            const photoFiles = ['photo1.b64', 'photo2.b64', 'photo3.b64', 'photo4.b64', 'photo5.b64'];
+            
+            for (let i = 0; i < photoFiles.length; i++) {
+                try {
+                    const response = await fetch(photoFiles[i]);
+                    const base64Data = await response.text();
+                    
+                    const photoItem = document.createElement('div');
+                    photoItem.className = 'photo-item';
+                    photoItem.innerHTML = `
+                        <img src="data:image/jpeg;base64,${base64Data.trim()}" alt="Our memory ${i + 1}">
+                        <div class="photo-overlay"></div>
+                    `;
+                    gallery.appendChild(photoItem);
+                } catch (error) {
+                    console.error('Error loading photo:', error);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
